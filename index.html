@@ -1,1 +1,717 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sept en Selle — One Turn 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-deep: #0a3d2e;
+  --green-mid: #1a6b4a;
+  --green-bright: #2db87a;
+  --green-pale: #e8f7f0;
+  --amber: #f0a500;
+  --amber-pale: #fef5e0;
+  --coral: #e85d3a;
+  --blue: #2d6abf;
+  --blue-pale: #e8f0fb;
+  --ink: #111a14;
+  --ink-mid: #3d4f44;
+  --ink-light: #7a8f82;
+  --border: #dce8e2;
+  --surface: #f5faf7;
+  --white: #ffffff;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(--ink); font-size: 14px; line-height: 1.6; }
 
+/* HEADER */
+.header {
+  background: var(--green-deep);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--white); letter-spacing: -.3px; }
+.logo span { color: var(--green-bright); }
+.header-actions { display: flex; gap: 8px; }
+
+/* HERO BANNER */
+.hero {
+  background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 100%);
+  padding: 32px 24px 28px;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '🚴';
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 64px;
+  opacity: .15;
+}
+.hero-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 6px; }
+.hero-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,.7); }
+
+/* TABS */
+.tabs-wrap { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 56px; z-index: 90; }
+.tabs { display: flex; gap: 0; overflow-x: auto; }
+.tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 14px 16px; font-size: 13px; font-weight: 500; color: var(--ink-light); cursor: pointer; white-space: nowrap; font-family: 'Inter', sans-serif; transition: color .15s, border-color .15s; }
+.tab.active { color: var(--green-mid); border-bottom-color: var(--green-mid); }
+.tab:hover:not(.active) { color: var(--ink); }
+
+/* MAIN */
+.main { max-width: 860px; margin: 0 auto; padding: 20px 16px 40px; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* METRICS */
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.mc { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.mc-label { font-size: 11px; color: var(--ink-light); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+.mc-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--ink); }
+.mc-sub { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+
+/* GAUGE */
+.gauge-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 12px; }
+.gauge-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.gauge-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.gauge-sub-label { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+.gauge-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; color: var(--green-mid); }
+.gauge-bg { height: 10px; border-radius: 5px; background: var(--border); overflow: hidden; margin-bottom: 6px; }
+.gauge-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--green-bright), var(--green-mid)); transition: width .6s cubic-bezier(.4,0,.2,1); }
+.gauge-range { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-light); }
+
+/* ROUTE */
+.route-card { background: linear-gradient(135deg, var(--green-pale), var(--white)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 12px; }
+.route-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.route-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.route-pct { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--green-mid); }
+.route-bg { height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; margin-bottom: 8px; }
+.route-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--amber), var(--green-bright)); transition: width .6s; }
+.route-info { font-size: 12px; color: var(--ink-mid); }
+
+/* MEDALS */
+.medals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.medal-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.medal-icon { font-size: 24px; margin-bottom: 6px; }
+.medal-title { font-size: 10px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+.medal-winner { font-size: 13px; font-weight: 600; color: var(--ink); }
+.medal-detail { font-size: 11px; color: var(--ink-light); }
+
+/* SECTION LABEL */
+.s-label { font-size: 11px; font-weight: 600; color: var(--ink-light); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 10px; }
+
+/* TABLE */
+.table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { font-size: 11px; font-weight: 600; color: var(--ink-light); text-align: left; padding: 10px 12px; background: var(--surface); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .04em; }
+th.r, td.r { text-align: right; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--ink); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface); }
+.pts-val { font-weight: 600; color: var(--green-mid); }
+.rank-medal { font-size: 16px; }
+
+/* TEAM DOT */
+.tdot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
+
+/* PILLS */
+.pill { display: inline-block; font-size: 10px; font-weight: 600; border-radius: 20px; padding: 2px 8px; }
+.pill-green { background: var(--green-pale); color: var(--green-mid); }
+.pill-amber { background: var(--amber-pale); color: #7a5200; }
+.pill-blue { background: var(--blue-pale); color: var(--blue); }
+.pill-coral { background: #fdeee9; color: var(--coral); }
+
+/* WEEK PILLS */
+.week-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.wp { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink-light); font-family: 'Inter', sans-serif; transition: all .15s; }
+.wp.active { background: var(--green-deep); color: var(--white); border-color: var(--green-deep); }
+
+/* FORM CARD */
+.form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 12px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-grid-3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.fg label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-mid); margin-bottom: 5px; }
+.fg input, .fg select, .fg textarea {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+  background: var(--white);
+  transition: border-color .15s;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus { outline: none; border-color: var(--green-mid); }
+.fg textarea { resize: vertical; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--ink); font-family: 'Inter', sans-serif; transition: all .15s; }
+.btn:hover { background: var(--surface); }
+.btn-g { background: var(--green-deep); color: var(--white); border-color: var(--green-deep); }
+.btn-g:hover { background: var(--green-mid); border-color: var(--green-mid); }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.btn-icon { background: none; border: none; cursor: pointer; color: var(--ink-light); font-size: 16px; padding: 2px 4px; }
+.btn-icon:hover { color: var(--coral); }
+
+/* TEAM CARD */
+.team-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; }
+.team-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.team-name { font-size: 14px; font-weight: 600; color: var(--ink); flex: 1; }
+.team-asso { font-size: 12px; color: var(--ink-light); }
+.team-members { font-size: 12px; color: var(--ink-mid); }
+
+/* ETAPES */
+.etape-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.etape-item:last-child { border-bottom: none; }
+.etape-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.e-unlocked { background: var(--green-bright); color: var(--white); }
+.e-current { background: var(--amber); color: var(--white); }
+.e-locked { background: var(--border); color: var(--ink-light); }
+.etape-flag { font-size: 18px; flex-shrink: 0; }
+.etape-info { flex: 1; }
+.etape-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.etape-dist { font-size: 11px; color: var(--ink-light); }
+
+/* BADGE SECTION */
+.badge-person { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+.badge-person-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+
+/* LOADING */
+.loading { text-align: center; padding: 2rem; color: var(--ink-light); font-size: 13px; }
+.empty { text-align: center; padding: 2.5rem; color: var(--ink-light); font-size: 13px; }
+.empty-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--green-deep); color: var(--white); padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 999; transform: translateY(60px); opacity: 0; transition: all .3s; pointer-events: none; }
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* PRINT */
+@media print {
+  .header, .tabs-wrap, .no-print { display: none !important; }
+  .section { display: block !important; }
+  .hero { background: var(--green-deep) !important; -webkit-print-color-adjust: exact; }
+  .main { padding: 0; }
+}
+
+@media (max-width: 600px) {
+  .medals-grid { grid-template-columns: 1fr; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+  .hero-title { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">One Turn <span>/ Sept en Selle</span></div>
+  <div class="header-actions no-print">
+    <button class="btn btn-g" onclick="exportCSV()">↓ Export CSV</button>
+    <button class="btn" onclick="window.print()">⎙ PDF</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Challenge mobilité douce · Septembre 2026</div>
+  <div class="hero-title">Sept en Selle 🚴</div>
+  <div class="hero-sub">Tour de l'UE en 25 étapes via les sites One Turn · 7 450 km collectifs</div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard',this)">Tableau de bord</button>
+    <button class="tab" onclick="showTab('saisie',this)">Saisir résultats</button>
+    <button class="tab" onclick="showTab('equipes',this)">Équipes</button>
+    <button class="tab" onclick="showTab('etapes',this)">Tour de l'UE</button>
+    <button class="tab" onclick="showTab('badges',this)">Badges</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="section active">
+  <div class="metric-grid" id="dash-metrics"><div class="loading">Chargement…</div></div>
+  <div class="gauge-card">
+    <div class="gauge-head">
+      <div>
+        <div class="gauge-title">🌱 Cagnotte collective</div>
+        <div class="gauge-sub-label" id="dash-asso">0,10 € par point</div>
+      </div>
+      <div class="gauge-val" id="dash-cagnotte-val">0,00 €</div>
+    </div>
+    <div class="gauge-bg"><div class="gauge-fill" id="dash-cagnotte-fill" style="width:0%"></div></div>
+    <div class="gauge-range"><span>0 €</span><span id="dash-cagnotte-max">500 €</span></div>
+  </div>
+  <div class="route-card">
+    <div class="route-head">
+      <div class="route-title">🗺️ Tour de l'UE · progression collective</div>
+      <div class="route-pct" id="dash-route-pct">0%</div>
+    </div>
+    <div class="route-bg"><div class="route-fill" id="dash-route-fill" style="width:0%"></div></div>
+    <div class="route-info" id="dash-route-info">Départ depuis Anglet</div>
+  </div>
+  <div class="medals-grid" id="dash-medals"></div>
+  <div class="s-label">Classement équipes</div>
+  <div class="table-wrap" style="margin-bottom:16px">
+    <table id="dash-team-lb"><thead><tr><th>#</th><th>Équipe</th><th class="r">Km</th><th class="r">Points</th><th class="r">Jours</th><th>Association</th></tr></thead><tbody><tr><td colspan="6" class="loading">Chargement…</td></tr></tbody></table>
+  </div>
+  <div class="s-label">Classement individuel</div>
+  <div class="week-pills" id="dash-week-pills"></div>
+  <div class="table-wrap">
+    <table id="dash-ind-lb"><thead><tr><th>#</th><th>Participant</th><th>Équipe</th><th class="r">Km D/T</th><th class="r">Km autres</th><th class="r">Jours</th><th class="r">Points</th></tr></thead><tbody><tr><td colspan="7" class="loading">Chargement…</td></tr></tbody></table>
+  </div>
+</div>
+
+<!-- SAISIE -->
+<div id="tab-saisie" class="section no-print">
+  <div class="form-card">
+    <div class="s-label" style="margin-top:0">Nouveau résultat hebdomadaire</div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Participant</label><input type="text" id="s-name" placeholder="Prénom Nom"></div>
+      <div class="fg"><label>Semaine</label><select id="s-week"><option>S1</option><option>S2</option><option>S3</option><option>S4</option></select></div>
+    </div>
+    <div class="form-grid-3">
+      <div class="fg"><label>Km domicile → travail (×3 pts)</label><input type="number" id="s-dt" min="0" step="0.1" placeholder="0"></div>
+      <div class="fg"><label>Km autres (×1 pt)</label><input type="number" id="s-other" min="0" step="0.1" placeholder="0"></div>
+      <div class="fg"><label>Jours actifs</label><input type="number" id="s-days" min="0" max="7" placeholder="0"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-g" onclick="addEntry()">+ Ajouter</button>
+    </div>
+  </div>
+  <div class="s-label">Résultats saisis</div>
+  <div class="week-pills" id="saisie-week-pills"></div>
+  <div class="table-wrap">
+    <table id="saisie-table">
+      <thead><tr><th>Participant</th><th>Équipe</th><th>Semaine</th><th class="r">Km D/T</th><th class="r">Km autres</th><th class="r">Jours</th><th class="r">Pts</th><th></th></tr></thead>
+      <tbody><tr><td colspan="8" class="loading">Chargement…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EQUIPES -->
+<div id="tab-equipes" class="section no-print">
+  <div class="form-card">
+    <div class="s-label" style="margin-top:0">Créer une équipe</div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Nom de l'équipe</label><input type="text" id="t-name" placeholder="Ex. Les Volcaniques"></div>
+      <div class="fg"><label>Association choisie</label><input type="text" id="t-asso" placeholder="Nom de l'asso"></div>
+    </div>
+    <div class="fg" style="margin-bottom:0">
+      <label>Membres (un par ligne)</label>
+      <textarea id="t-members" rows="5" placeholder="Marie Dupont&#10;Pierre Martin&#10;..."></textarea>
+    </div>
+    <div class="btn-row"><button class="btn btn-g" onclick="addTeam()">+ Créer l'équipe</button></div>
+  </div>
+  <div id="teams-list"><div class="loading">Chargement…</div></div>
+</div>
+
+<!-- TOUR UE -->
+<div id="tab-etapes" class="section">
+  <div class="form-card no-print">
+    <div class="s-label" style="margin-top:0">Objectif cagnotte</div>
+    <div class="form-grid-2">
+      <div class="fg"><label>Montant objectif (€)</label><input type="number" id="goal-inp" min="0" step="50" placeholder="500"></div>
+      <div class="fg" style="display:flex;align-items:flex-end"><button class="btn btn-g" onclick="saveGoal()" style="width:100%">Enregistrer</button></div>
+    </div>
+  </div>
+  <div class="s-label">Étapes du tour</div>
+  <div class="table-wrap" style="padding:8px 16px" id="etapes-list"></div>
+</div>
+
+<!-- BADGES -->
+<div id="tab-badges" class="section">
+  <div id="badges-list"><div class="loading">Chargement…</div></div>
+</div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://pjbmxcvdgmnncqvxcqka.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Je_MbALGYusxClrJ-nwR5g_OXLt-vlz';
+
+const TEAM_COLORS = ['#2d6abf','#e85d3a','#2db87a','#7f77dd','#f0a500','#d4537e'];
+
+const ETAPES = [
+  {name:'Anglet',flag:'🇫🇷',dist:0,cumul:0},
+  {name:'Saint-Geours-de-Maremne',flag:'🇫🇷',dist:40,cumul:40},
+  {name:'Biarritz',flag:'🇫🇷',dist:10,cumul:50},
+  {name:'Hossegor',flag:'🇫🇷',dist:20,cumul:70},
+  {name:'Bordeaux',flag:'🇫🇷',dist:180,cumul:250},
+  {name:'Nantes',flag:'🇫🇷',dist:320,cumul:570},
+  {name:'Honfleur',flag:'🇫🇷',dist:380,cumul:950},
+  {name:'Paris',flag:'🇫🇷',dist:200,cumul:1150},
+  {name:'Roppenheim',flag:'🇫🇷',dist:480,cumul:1630},
+  {name:'Stuttgart',flag:'🇩🇪',dist:200,cumul:1830},
+  {name:'Metzingen',flag:'🇩🇪',dist:40,cumul:1870},
+  {name:'Salzburg',flag:'🇦🇹',dist:300,cumul:2170},
+  {name:'Parndorf',flag:'🇦🇹',dist:280,cumul:2450},
+  {name:'Lyon',flag:'🇫🇷',dist:900,cumul:3350},
+  {name:'Chamonix',flag:'🇫🇷',dist:170,cumul:3520},
+  {name:'Les 2 Alpes',flag:'🇫🇷',dist:140,cumul:3660},
+  {name:'Aix-en-Provence',flag:'🇫🇷',dist:280,cumul:3940},
+  {name:'Barcelona',flag:'🇪🇸',dist:300,cumul:4240},
+  {name:'Viladecans',flag:'🇪🇸',dist:20,cumul:4260},
+  {name:'Malaga',flag:'🇪🇸',dist:820,cumul:5080},
+  {name:'La Coruña',flag:'🇪🇸',dist:1100,cumul:6180},
+  {name:'Porto',flag:'🇵🇹',dist:300,cumul:6480},
+  {name:'San Sebastián',flag:'🇪🇸',dist:580,cumul:7060},
+  {name:'Toulouse',flag:'🇫🇷',dist:190,cumul:7250},
+  {name:'Anglet (retour) 🏁',flag:'🇫🇷',dist:200,cumul:7450},
+];
+const TOTAL_KM = 7450;
+
+const BADGE_DEFS = [
+  {id:'first_ride',label:'Premier coup de pédale',desc:'Premier trajet D/T saisi',color:'pill-green',check:p=>p.totalDt>0},
+  {id:'km50',label:'50 km',desc:'50 km cumulés',color:'pill-amber',check:p=>p.totalKm>=50},
+  {id:'km100',label:'100 km',desc:'100 km cumulés',color:'pill-amber',check:p=>p.totalKm>=100},
+  {id:'km200',label:'200 km',desc:'200 km cumulés',color:'pill-amber',check:p=>p.totalKm>=200},
+  {id:'km500',label:'500 km',desc:'500 km cumulés',color:'pill-coral',check:p=>p.totalKm>=500},
+  {id:'regulier',label:'Fer de lance',desc:'5 jours actifs en une semaine',color:'pill-blue',check:p=>p.maxDaysWeek>=5},
+  {id:'sans_faille',label:'Sans faille',desc:'Actif les 4 semaines',color:'pill-green',check:p=>p.activeWeeks>=4},
+  {id:'best_dt',label:'Champion D/T',desc:'Plus de km D/T',color:'pill-green',check:null},
+  {id:'best_km',label:'Meilleur km',desc:'Plus de km au total',color:'pill-coral',check:null},
+  {id:'best_days',label:'Quotidien',desc:'Plus de jours actifs',color:'pill-blue',check:null},
+];
+
+let state = { entries:[], teams:[], goal:500, activeWeekDash:'all', activeWeekSaisie:'all' };
+
+// ---- SUPABASE HELPERS ----
+async function sbFetch(path, opts={}) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation', ...opts.headers },
+    ...opts
+  });
+  if (!res.ok) { const e = await res.text(); throw new Error(e); }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : [];
+}
+
+async function loadAll() {
+  const [equipes, resultats] = await Promise.all([
+    sbFetch('equipes?order=nom'),
+    sbFetch('resultats?order=created_at')
+  ]);
+  state.teams = equipes.map((t,i) => ({
+    id: t.id, name: t.nom, asso: t.association||'', members: (t.membres||'').split('\n').filter(Boolean), color: t.couleur || TEAM_COLORS[i % TEAM_COLORS.length]
+  }));
+  state.entries = resultats.map(r => ({
+    id: r.id, name: r.participant, equipe_id: r.equipe_id, week: r.semaine, dt: parseFloat(r.km_dt)||0, other: parseFloat(r.km_autres)||0, days: parseInt(r.jours)||0
+  }));
+  state.goal = parseFloat(localStorage.getItem('oneturn_goal') || '500');
+  render();
+}
+
+// ---- POINTS ----
+function pts(dt, other) { return Math.round(dt * 3 + other); }
+
+// ---- AGGREGATION ----
+function getParticipantStats(entries) {
+  if (!entries) entries = state.entries;
+  const map = {};
+  for (const e of entries) {
+    if (!map[e.name]) map[e.name] = { name:e.name, totalKm:0, totalDt:0, totalOther:0, totalDays:0, totalPts:0, weekData:{}, activeWeeks:0, maxDaysWeek:0, equipe_id:e.equipe_id };
+    const p = map[e.name];
+    p.totalKm += e.dt + e.other;
+    p.totalDt += e.dt;
+    p.totalOther += e.other;
+    p.totalDays += e.days;
+    p.totalPts += pts(e.dt, e.other);
+    if (!p.weekData[e.week]) p.weekData[e.week] = {days:0};
+    p.weekData[e.week].days += e.days;
+    p.activeWeeks = Object.keys(p.weekData).filter(w => p.weekData[w].days > 0).length;
+    p.maxDaysWeek = Math.max(p.maxDaysWeek, e.days);
+  }
+  return Object.values(map);
+}
+
+function getTeamStats() {
+  const pStats = getParticipantStats();
+  const pMap = {};
+  for (const p of pStats) pMap[p.name] = p;
+  return state.teams.map(t => {
+    const km = t.members.reduce((s,m) => s + (pMap[m]?pMap[m].totalKm:0), 0);
+    const p = t.members.reduce((s,m) => s + (pMap[m]?pMap[m].totalPts:0), 0);
+    const days = t.members.reduce((s,m) => s + (pMap[m]?pMap[m].totalDays:0), 0);
+    return { id:t.id, name:t.name, color:t.color, asso:t.asso, members:t.members, km, pts:p, days };
+  }).sort((a,b) => b.km - a.km);
+}
+
+function teamOf(name) {
+  for (const t of state.teams) if (t.members.includes(name)) return t;
+  return null;
+}
+
+function weeks() { return [...new Set(state.entries.map(e => e.week))].sort(); }
+
+// ---- ACTIONS ----
+async function addEntry() {
+  const name = document.getElementById('s-name').value.trim();
+  const week = document.getElementById('s-week').value;
+  const dt = parseFloat(document.getElementById('s-dt').value)||0;
+  const other = parseFloat(document.getElementById('s-other').value)||0;
+  const days = parseInt(document.getElementById('s-days').value)||0;
+  if (!name) { document.getElementById('s-name').focus(); return; }
+  const t = teamOf(name);
+  const existing = state.entries.find(e => e.name===name && e.week===week);
+  try {
+    if (existing && existing.id) {
+      await sbFetch('resultats?id=eq.'+existing.id, { method:'PATCH', body: JSON.stringify({km_dt:dt, km_autres:other, jours:days}) });
+    } else {
+      await sbFetch('resultats', { method:'POST', body: JSON.stringify({participant:name, equipe_id:t?t.id:null, semaine:week, km_dt:dt, km_autres:other, jours:days}) });
+    }
+    document.getElementById('s-dt').value='';
+    document.getElementById('s-other').value='';
+    document.getElementById('s-days').value='';
+    toast('✓ Résultat enregistré');
+    await loadAll();
+  } catch(e) { toast('Erreur : ' + e.message, true); }
+}
+
+async function delEntry(id) {
+  try {
+    await sbFetch('resultats?id=eq.'+id, { method:'DELETE', headers:{'Prefer':''} });
+    toast('Supprimé');
+    await loadAll();
+  } catch(e) { toast('Erreur', true); }
+}
+
+async function addTeam() {
+  const nom = document.getElementById('t-name').value.trim();
+  const asso = document.getElementById('t-asso').value.trim();
+  const membres = document.getElementById('t-members').value.trim();
+  if (!nom) return;
+  const color = TEAM_COLORS[state.teams.length % TEAM_COLORS.length];
+  try {
+    await sbFetch('equipes', { method:'POST', body: JSON.stringify({nom, association:asso, membres, couleur:color}) });
+    document.getElementById('t-name').value='';
+    document.getElementById('t-asso').value='';
+    document.getElementById('t-members').value='';
+    toast('✓ Équipe créée');
+    await loadAll();
+  } catch(e) { toast('Erreur : ' + e.message, true); }
+}
+
+async function delTeam(id) {
+  try {
+    await sbFetch('equipes?id=eq.'+id, { method:'DELETE', headers:{'Prefer':''} });
+    toast('Équipe supprimée');
+    await loadAll();
+  } catch(e) { toast('Erreur', true); }
+}
+
+function saveGoal() {
+  const v = parseFloat(document.getElementById('goal-inp').value);
+  if (!isNaN(v) && v > 0) { state.goal = v; localStorage.setItem('oneturn_goal', v); render(); toast('✓ Objectif mis à jour'); }
+}
+
+// ---- TABS ----
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function setDashWeek(w) { state.activeWeekDash = w; renderDashboard(); }
+function setSaisieWeek(w) { state.activeWeekSaisie = w; renderSaisie(); }
+
+function renderWeekPills(containerId, activeVal, fn) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const ws = weeks();
+  let h = `<button class="wp${activeVal==='all'?' active':''}" onclick="${fn}('all')">Toutes semaines</button>`;
+  for (const w of ws) h += `<button class="wp${activeVal===w?' active':''}" onclick="${fn}('${w}')">${w}</button>`;
+  el.innerHTML = h;
+}
+
+// ---- RENDER ----
+function render() { renderDashboard(); renderSaisie(); renderEquipes(); renderEtapes(); renderBadges(); }
+
+function renderDashboard() {
+  renderWeekPills('dash-week-pills', state.activeWeekDash, 'setDashWeek');
+  const filtered = state.activeWeekDash==='all' ? state.entries : state.entries.filter(e => e.week===state.activeWeekDash);
+  const fStats = getParticipantStats(filtered);
+  const allStats = getParticipantStats();
+  const allKm = allStats.reduce((s,p) => s+p.totalKm, 0);
+  const allPts = allStats.reduce((s,p) => s+p.totalPts, 0);
+  const cagnotte = allPts * 0.10;
+  const totalKm = fStats.reduce((s,p) => s+p.totalKm, 0);
+  const totalPts = fStats.reduce((s,p) => s+p.totalPts, 0);
+  const totalDays = fStats.reduce((s,p) => s+p.totalDays, 0);
+
+  document.getElementById('dash-metrics').innerHTML = `
+    <div class="mc"><div class="mc-label">Participants</div><div class="mc-value">${fStats.length}</div><div class="mc-sub">cyclistes actifs</div></div>
+    <div class="mc"><div class="mc-label">Km collectifs</div><div class="mc-value">${totalKm.toFixed(0)}</div><div class="mc-sub">période sélectionnée</div></div>
+    <div class="mc"><div class="mc-label">Points</div><div class="mc-value">${totalPts}</div><div class="mc-sub">0,10 € / pt</div></div>
+    <div class="mc"><div class="mc-label">Jours actifs</div><div class="mc-value">${totalDays}</div><div class="mc-sub">total participants</div></div>
+  `;
+
+  const pct = Math.min(100, (cagnotte / state.goal) * 100);
+  document.getElementById('dash-cagnotte-val').textContent = cagnotte.toFixed(2).replace('.',',') + ' €';
+  document.getElementById('dash-cagnotte-fill').style.width = pct + '%';
+  document.getElementById('dash-cagnotte-max').textContent = state.goal.toFixed(0) + ' €';
+  const assos = state.teams.filter(t=>t.asso).map(t=>t.asso);
+  document.getElementById('dash-asso').textContent = assos.length ? 'Assos : ' + assos.join(' · ') : '0,10 € par point';
+
+  const routePct = Math.min(100, (allKm / TOTAL_KM) * 100);
+  document.getElementById('dash-route-fill').style.width = routePct + '%';
+  document.getElementById('dash-route-pct').textContent = routePct.toFixed(1) + '%';
+  const etapeCourante = ETAPES.filter(e => e.cumul <= allKm).pop() || ETAPES[0];
+  const etapeSuiv = ETAPES.find(e => e.cumul > allKm);
+  document.getElementById('dash-route-info').textContent = `${etapeCourante.flag} ${etapeCourante.name}` + (etapeSuiv ? ` → prochaine : ${etapeSuiv.flag} ${etapeSuiv.name} (encore ${Math.round(etapeSuiv.cumul - allKm)} km)` : ' 🏁 Tour terminé !');
+
+  const topKm = [...allStats].sort((a,b) => b.totalKm - a.totalKm)[0];
+  const topDays = [...allStats].sort((a,b) => b.totalDays - a.totalDays)[0];
+  const teamStats = getTeamStats();
+  const topTeam = teamStats[0];
+  document.getElementById('dash-medals').innerHTML = `
+    <div class="medal-card"><div class="medal-icon">🥇</div><div class="medal-title">Meilleure équipe</div><div class="medal-winner">${topTeam?topTeam.name:'—'}</div><div class="medal-detail">${topTeam?topTeam.km.toFixed(0)+' km':''}</div></div>
+    <div class="medal-card"><div class="medal-icon">🚴</div><div class="medal-title">Meilleur km individuel</div><div class="medal-winner">${topKm?topKm.name:'—'}</div><div class="medal-detail">${topKm?topKm.totalKm.toFixed(0)+' km':''}</div></div>
+    <div class="medal-card"><div class="medal-icon">📅</div><div class="medal-title">Meilleure régularité</div><div class="medal-winner">${topDays?topDays.name:'—'}</div><div class="medal-detail">${topDays?topDays.totalDays+' jours':''}</div></div>
+  `;
+
+  const medals = ['🥇','🥈','🥉'];
+  const tBody = document.querySelector('#dash-team-lb tbody');
+  if (teamStats.length === 0) { tBody.innerHTML = '<tr><td colspan="6" class="empty"><span class="empty-icon">👥</span>Aucune équipe configurée</td></tr>'; }
+  else tBody.innerHTML = teamStats.map((t,i) => `<tr><td><span class="rank-medal">${medals[i]||i+1}</span></td><td><span class="tdot" style="background:${t.color}"></span><strong>${t.name}</strong></td><td class="r">${t.km.toFixed(0)}</td><td class="r pts-val">${t.pts}</td><td class="r">${t.days}</td><td style="font-size:12px;color:var(--ink-light)">${t.asso||'—'}</td></tr>`).join('');
+
+  const iBody = document.querySelector('#dash-ind-lb tbody');
+  const iStats = getParticipantStats(filtered).sort((a,b) => b.totalPts - a.totalPts);
+  if (iStats.length === 0) { iBody.innerHTML = '<tr><td colspan="7" class="empty"><span class="empty-icon">🚴</span>Aucun résultat saisi</td></tr>'; }
+  else iBody.innerHTML = iStats.map((p,i) => {
+    const t = teamOf(p.name);
+    const dot = t ? `<span class="tdot" style="background:${t.color}"></span>${t.name}` : '—';
+    return `<tr><td>${medals[i]||i+1}</td><td><strong>${p.name}</strong></td><td>${dot}</td><td class="r">${p.totalDt.toFixed(1)}</td><td class="r">${p.totalOther.toFixed(1)}</td><td class="r">${p.totalDays}</td><td class="r pts-val">${p.totalPts}</td></tr>`;
+  }).join('');
+}
+
+function renderSaisie() {
+  renderWeekPills('saisie-week-pills', state.activeWeekSaisie, 'setSaisieWeek');
+  const filtered = (state.activeWeekSaisie==='all' ? state.entries : state.entries.filter(e=>e.week===state.activeWeekSaisie)).slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const tbody = document.querySelector('#saisie-table tbody');
+  if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="empty"><span class="empty-icon">📋</span>Aucun résultat saisi</td></tr>'; return; }
+  tbody.innerHTML = filtered.map(e => {
+    const t = teamOf(e.name);
+    const dot = t ? `<span class="tdot" style="background:${t.color}"></span>${t.name}` : '<span style="color:var(--ink-light)">sans équipe</span>';
+    return `<tr><td><strong>${e.name}</strong></td><td>${dot}</td><td><span class="pill pill-green">${e.week}</span></td><td class="r">${e.dt.toFixed(1)}</td><td class="r">${e.other.toFixed(1)}</td><td class="r">${e.days}</td><td class="r pts-val">${pts(e.dt,e.other)}</td><td><button class="btn-icon" onclick="delEntry('${e.id}')">×</button></td></tr>`;
+  }).join('');
+}
+
+function renderEquipes() {
+  const el = document.getElementById('teams-list');
+  if (state.teams.length === 0) { el.innerHTML = '<div class="empty"><span class="empty-icon">👥</span>Aucune équipe créée</div>'; return; }
+  el.innerHTML = state.teams.map(t => `
+    <div class="team-card">
+      <div class="team-header">
+        <span class="tdot" style="background:${t.color};width:14px;height:14px"></span>
+        <div class="team-name">${t.name}</div>
+        <div class="team-asso">${t.asso||'Aucune association'}</div>
+        <button class="btn-icon" onclick="delTeam('${t.id}')">×</button>
+      </div>
+      <div class="team-members">${t.members.length} membre(s) : ${t.members.join(', ')||'—'}</div>
+    </div>
+  `).join('');
+}
+
+function renderEtapes() {
+  document.getElementById('goal-inp').value = state.goal;
+  const allKm = getParticipantStats().reduce((s,p) => s+p.totalKm, 0);
+  const etapeCourante = ETAPES.filter(e => e.cumul <= allKm).pop() || ETAPES[0];
+  document.getElementById('etapes-list').innerHTML = ETAPES.map((e,i) => {
+    const unlocked = allKm >= e.cumul;
+    const isCurrent = e === etapeCourante && i > 0;
+    const cls = isCurrent ? 'e-current' : unlocked ? 'e-unlocked' : 'e-locked';
+    const icon = isCurrent ? '📍' : unlocked ? '✓' : i+1;
+    return `<div class="etape-item">
+      <div class="etape-num ${cls}">${icon}</div>
+      <div class="etape-flag">${e.flag}</div>
+      <div class="etape-info"><div class="etape-name">${e.name}</div><div class="etape-dist">${i===0?'Point de départ':'+'+e.dist+' km — cumulé : '+e.cumul+' km'}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderBadges() {
+  const pStats = getParticipantStats();
+  const topKm = [...pStats].sort((a,b) => b.totalKm-a.totalKm)[0];
+  const topDays = [...pStats].sort((a,b) => b.totalDays-a.totalDays)[0];
+  const topDt = [...pStats].sort((a,b) => b.totalDt-a.totalDt)[0];
+  const el = document.getElementById('badges-list');
+  if (pStats.length === 0) { el.innerHTML = '<div class="empty"><span class="empty-icon">⭐</span>Saisir des résultats pour voir les badges</div>'; return; }
+  let html = '<div class="s-label">Badges débloqués</div>';
+  for (const p of [...pStats].sort((a,b) => a.name.localeCompare(b.name))) {
+    const earned = BADGE_DEFS.filter(b => {
+      if (b.check) return b.check(p);
+      if (b.id==='best_dt') return topDt && topDt.name===p.name && p.totalDt>0;
+      if (b.id==='best_km') return topKm && topKm.name===p.name && p.totalKm>0;
+      if (b.id==='best_days') return topDays && topDays.name===p.name && p.totalDays>0;
+      return false;
+    });
+    const t = teamOf(p.name);
+    html += `<div class="badge-person">
+      <div class="badge-person-head">
+        ${t?`<span class="tdot" style="background:${t.color}"></span>`:''}
+        <strong style="font-size:13px">${p.name}</strong>
+        <span style="font-size:11px;color:var(--ink-light);margin-left:auto">${p.totalKm.toFixed(0)} km · ${p.totalDays} j</span>
+      </div>
+      <div>${earned.length===0?'<span style="font-size:12px;color:var(--ink-light)">Aucun badge encore</span>':earned.map(b=>`<span class="pill ${b.color}" style="margin:2px">${b.label}</span>`).join('')}</div>
+    </div>`;
+  }
+  html += '<div class="s-label" style="margin-top:1.5rem">Référentiel des badges</div><div class="table-wrap"><table><tbody>';
+  for (const b of BADGE_DEFS) html += `<tr><td><span class="pill ${b.color}">${b.label}</span></td><td style="font-size:12px;color:var(--ink-light)">${b.desc}</td></tr>`;
+  html += '</tbody></table></div>';
+  el.innerHTML = html;
+}
+
+// ---- EXPORT CSV ----
+function exportCSV() {
+  const rows = [['Participant','Equipe','Association','Semaine','Km_DT','Km_autres','Jours','Points']];
+  for (const e of state.entries) {
+    const t = teamOf(e.name);
+    rows.push([e.name, t?t.name:'', t?t.asso:'', e.week, e.dt.toFixed(1), e.other.toFixed(1), e.days, pts(e.dt,e.other)]);
+  }
+  const csv = '\uFEFF' + rows.map(r => r.map(v => '"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sept_en_selle_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---- TOAST ----
+function toast(msg, err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = err ? '#c0392b' : 'var(--green-deep)';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ---- INIT ----
+loadAll().catch(e => {
+  document.getElementById('dash-metrics').innerHTML = '<div class="empty">Erreur de connexion à la base de données.<br>' + e.message + '</div>';
+});
+</script>
+</body>
+</html>
