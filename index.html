@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Challenge Vélo Septembre — One Turn</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:14px}
+.app{max-width:900px;margin:0 auto;padding:24px 16px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.logo{font-size:18px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px}
+.logo span{color:#085041}
+.header-actions{display:flex;gap:8px}
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;border-bottom:1px solid #e0e0d8;padding-bottom:12px}
+.tab{background:transparent;border:1px solid #ccc;border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;color:#666}
+.tab.active{background:#085041;color:#fff;border-color:#085041}
+.tab:hover:not(.active){background:#f0f0ee}
+.section{display:none}.section.active{display:block}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.mc{background:#fff;border-radius:8px;padding:12px 14px;border:1px solid #e8e8e4}
+.mc-label{font-size:11px;color:#888;margin-bottom:4px}
+.mc-value{font-size:20px;font-weight:600;color:#1a1a1a}
+.mc-sub{font-size:11px;color:#aaa;margin-top:2px}
+.card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.section-label{font-size:11px;font-weight:600;color:#888;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.form-row{display:grid;gap:10px;margin-bottom:10px}
+.form-2{grid-template-columns:1fr 1fr}
+.form-3{grid-template-columns:2fr 1fr 1fr}
+.fg label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+.fg input,.fg select,.fg textarea{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:inherit;background:#fff;color:#1a1a1a}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#085041}
+.fg textarea{resize:vertical}
+.btn{border-radius:6px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #ccc;background:#fff;color:#1a1a1a;font-family:inherit}
+.btn:hover{background:#f5f5f3}
+.btn-g{background:#085041;color:#fff;border-color:#085041}
+.btn-g:hover{background:#0F6E56}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gauge-wrap{background:#f9f9f7;border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid #e8e8e4}
+.gauge-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.gauge-title{font-size:13px;font-weight:600;color:#1a1a1a}
+.gauge-val{font-size:20px;font-weight:600;color:#085041}
+.gauge-bg{height:12px;border-radius:6px;background:#e0e0d8;overflow:hidden;margin-bottom:5px}
+.gauge-fill{height:100%;border-radius:6px;background:#1D9E75;transition:width .5s}
+.gauge-sub{display:flex;justify-content:space-between;font-size:11px;color:#999}
+.progress-wrap{background:#f9f9f7;border-radius:10px;padding:14px 16px;margin-bottom:12px;border:1px solid #e8e8e4}
+.pb-label{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px}
+.pb-bg{height:8px;border-radius:4px;background:#e0e0d8;overflow:hidden;margin-bottom:5px}
+.pb-fill{height:100%;border-radius:4px;background:#378ADD;transition:width .5s}
+.pb-sub{font-size:11px;color:#999}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11px;font-weight:600;color:#888;text-align:left;padding:8px 10px;background:#f9f9f7;border-bottom:1px solid #e8e8e4}
+th.r,td.r{text-align:right}
+td{padding:9px 10px;border-bottom:1px solid #f0f0ee;color:#1a1a1a}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
+.team-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+.badge-pill{display:inline-block;font-size:10px;border-radius:10px;padding:2px 8px;font-weight:600;margin:2px}
+.bp-green{background:#E1F5EE;color:#085041}
+.bp-amber{background:#FAEEDA;color:#7a4d0a}
+.bp-blue{background:#E6F1FB;color:#185FA5}
+.bp-coral{background:#FAECE7;color:#993C1D}
+.bp-purple{background:#EEEDFE;color:#534AB7}
+.medal-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.medal-card{background:#fff;border:1px solid #e8e8e4;border-radius:8px;padding:12px;text-align:center}
+.medal-icon{font-size:22px;margin-bottom:4px}
+.medal-title{font-size:10px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.medal-winner{font-size:12px;font-weight:600;color:#1a1a1a}
+.etape-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0ee}
+.etape-item:last-child{border-bottom:none}
+.etape-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.etape-unlocked{background:#1D9E75;color:#fff}
+.etape-locked{background:#f0f0ee;color:#999}
+.etape-name{font-size:13px;font-weight:500}
+.etape-dist{font-size:11px;color:#999}
+.week-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.week-pill{background:transparent;border:1px solid #ccc;border-radius:20px;padding:3px 10px;font-size:12px;cursor:pointer;color:#666}
+.week-pill.active{background:#085041;color:#fff;border-color:#085041}
+.del-btn{background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:0}
+.del-btn:hover{color:#e24b4a}
+.team-card{background:#fff;border:1px solid #e8e8e4;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.team-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.empty{padding:2rem;text-align:center;color:#aaa;font-size:13px}
+.table-wrap{border-radius:10px;overflow:hidden;border:1px solid #e8e8e4}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  body{background:#fff;font-size:12px}
+  .app{max-width:100%;padding:0}
+  .no-print{display:none!important}
+  .print-only{display:block!important}
+  header{margin-bottom:16px}
+  .tabs{display:none}
+  .section{display:block!important}
+  .print-page-break{page-break-after:always}
+  .metric-grid{grid-template-columns:repeat(4,1fr)}
+  .medal-section{grid-template-columns:repeat(3,1fr)}
+  .card,.gauge-wrap,.progress-wrap{border:1px solid #ccc;break-inside:avoid}
+  table{font-size:11px}
+  th,td{padding:6px 8px}
+  .print-hide{display:none!important}
+  .tab-equipes-print,.tab-badges-print,.tab-saisie-print{display:none!important}
+}
+.print-only{display:none}
+
+/* ===== PRINT VIEW PANEL ===== */
+#print-view{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="logo">One Turn <span>/ Challenge Vélo Septembre</span></div>
+  <div class="header-actions no-print">
+    <button class="btn btn-g" onclick="exportCSV()">📥 Export CSV</button>
+    <button class="btn" onclick="window.print()">🖨️ Imprimer / PDF</button>
+  </div>
+</header>
+
+<div class="tabs no-print">
+  <button class="tab active" onclick="showTab('dashboard',this)">📊 Tableau de bord</button>
+  <button class="tab" onclick="showTab('saisie',this)">➕ Saisir résultats</button>
+  <button class="tab" onclick="showTab('equipes',this)">👥 Équipes</button>
+  <button class="tab" onclick="showTab('etapes',this)">🗺️ Tour de l'UE</button>
+  <button class="tab" onclick="showTab('badges',this)">⭐ Badges</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="section active">
+  <div class="metric-grid" id="dash-metrics"></div>
+  <div class="gauge-wrap">
+    <div class="gauge-head">
+      <div>
+        <div class="gauge-title">🌱 Cagnotte collective</div>
+        <div style="font-size:11px;color:#999;margin-top:2px" id="dash-asso"></div>
+      </div>
+      <div class="gauge-val" id="dash-cagnotte-val">0,00 €</div>
+    </div>
+    <div class="gauge-bg"><div class="gauge-fill" id="dash-cagnotte-fill" style="width:0%"></div></div>
+    <div class="gauge-sub"><span>0 €</span><span id="dash-cagnotte-max">500 €</span></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="pb-label"><span>🗺️ Tour de l'UE — progression collective</span><span id="dash-route-pct">0%</span></div>
+    <div class="pb-bg"><div class="pb-fill" id="dash-route-fill" style="width:0%"></div></div>
+    <div class="pb-sub" id="dash-route-sub"></div>
+  </div>
+  <div class="medal-section" id="dash-medals"></div>
+  <div class="section-label">Classement équipes</div>
+  <div class="table-wrap" style="margin-bottom:14px">
+    <table id="dash-team-lb">
+      <thead><tr><th>#</th><th>Équipe</th><th class="r">Km</th><th class="r">Points</th><th class="r">Jours</th><th>Association</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="section-label">Classement individuel</div>
+  <div class="week-pills no-print" id="dash-week-pills"></div>
+  <div class="table-wrap">
+    <table id="dash-ind-lb">
+      <thead><tr><th>#</th><th>Participant</th><th>Équipe</th><th class="r">Km D/T</th><th class="r">Km autres</th><th class="r">Jours</th><th class="r">Points</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SAISIE -->
+<div id="tab-saisie" class="section print-hide">
+  <div class="card">
+    <div class="section-label">Nouveau résultat hebdomadaire</div>
+    <div class="form-row form-2">
+      <div class="fg"><label>Participant</label><input type="text" id="s-name" placeholder="Prénom Nom"></div>
+      <div class="fg"><label>Semaine</label>
+        <select id="s-week">
+          <option>S1</option><option>S2</option><option>S3</option><option>S4</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row form-3">
+      <div class="fg"><label>Km domicile → travail (×3 pts)</label><input type="number" id="s-dt" min="0" step="0.1" placeholder="0"></div>
+      <div class="fg"><label>Km autres (×1 pt)</label><input type="number" id="s-other" min="0" step="0.1" placeholder="0"></div>
+      <div class="fg"><label>Jours actifs</label><input type="number" id="s-days" min="0" max="7" step="1" placeholder="0"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-g" onclick="addEntry()">+ Ajouter</button>
+    </div>
+  </div>
+  <div class="section-label">Résultats saisis</div>
+  <div class="week-pills" id="saisie-week-pills"></div>
+  <div class="table-wrap">
+    <table id="saisie-table">
+      <thead><tr><th>Participant</th><th>Équipe</th><th>Semaine</th><th class="r">Km D/T</th><th class="r">Km autres</th><th class="r">Jours</th><th class="r">Pts</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EQUIPES -->
+<div id="tab-equipes" class="section print-hide">
+  <div class="card">
+    <div class="section-label">Créer une équipe</div>
+    <div class="form-row form-2">
+      <div class="fg"><label>Nom de l'équipe</label><input type="text" id="t-name" placeholder="Ex. Les Volcaniques"></div>
+      <div class="fg"><label>Association choisie</label><input type="text" id="t-asso" placeholder="Nom de l'asso"></div>
+    </div>
+    <div class="fg" style="margin-bottom:10px">
+      <label>Membres (un par ligne)</label>
+      <textarea id="t-members" rows="5" placeholder="Marie Dupont&#10;Pierre Martin&#10;..."></textarea>
+    </div>
+    <div class="btn-row"><button class="btn btn-g" onclick="addTeam()">+ Créer l'équipe</button></div>
+  </div>
+  <div id="teams-list"></div>
+</div>
+
+<!-- TOUR UE -->
+<div id="tab-etapes" class="section print-hide">
+  <div class="card">
+    <div class="section-label">Objectif cagnotte</div>
+    <div class="form-row form-2">
+      <div class="fg"><label>Montant (€)</label><input type="number" id="goal-inp" min="0" step="50" placeholder="500"></div>
+      <div class="fg" style="display:flex;align-items:flex-end"><button class="btn btn-g" onclick="saveGoal()" style="width:100%">Enregistrer</button></div>
+    </div>
+  </div>
+  <div class="section-label">Étapes du tour</div>
+  <div class="card" id="etapes-list" style="padding:8px 14px"></div>
+</div>
+
+<!-- BADGES -->
+<div id="tab-badges" class="section print-hide">
+  <div id="badges-list"></div>
+</div>
+
+</div><!-- end .app -->
+
+<script>
+const TEAM_COLORS=['#378ADD','#D85A30','#1D9E75','#7F77DD','#BA7517','#D4537E'];
+
+const ETAPES=[
+  {name:'Anglet',flag:'🇫🇷',dist:0,cumul:0},
+  {name:'Saint-Geours-de-Maremne',flag:'🇫🇷',dist:40,cumul:40},
+  {name:'Biarritz',flag:'🇫🇷',dist:10,cumul:50},
+  {name:'Hossegor',flag:'🇫🇷',dist:20,cumul:70},
+  {name:'Bordeaux',flag:'🇫🇷',dist:180,cumul:250},
+  {name:'Nantes',flag:'🇫🇷',dist:320,cumul:570},
+  {name:'Honfleur',flag:'🇫🇷',dist:380,cumul:950},
+  {name:'Paris',flag:'🇫🇷',dist:200,cumul:1150},
+  {name:'Roppenheim',flag:'🇫🇷',dist:480,cumul:1630},
+  {name:'Stuttgart',flag:'🇩🇪',dist:200,cumul:1830},
+  {name:'Metzingen',flag:'🇩🇪',dist:40,cumul:1870},
+  {name:'Salzburg',flag:'🇦🇹',dist:300,cumul:2170},
+  {name:'Parndorf',flag:'🇦🇹',dist:280,cumul:2450},
+  {name:'Lyon',flag:'🇫🇷',dist:900,cumul:3350},
+  {name:'Chamonix',flag:'🇫🇷',dist:170,cumul:3520},
+  {name:'Les 2 Alpes',flag:'🇫🇷',dist:140,cumul:3660},
+  {name:'Aix-en-Provence',flag:'🇫🇷',dist:280,cumul:3940},
+  {name:'Barcelona',flag:'🇪🇸',dist:300,cumul:4240},
+  {name:'Viladecans',flag:'🇪🇸',dist:20,cumul:4260},
+  {name:'Malaga',flag:'🇪🇸',dist:820,cumul:5080},
+  {name:'La Coruña',flag:'🇪🇸',dist:1100,cumul:6180},
+  {name:'Porto',flag:'🇵🇹',dist:300,cumul:6480},
+  {name:'San Sebastián',flag:'🇪🇸',dist:580,cumul:7060},
+  {name:'Toulouse',flag:'🇫🇷',dist:190,cumul:7250},
+  {name:'Anglet (retour) 🏁',flag:'🇫🇷',dist:200,cumul:7450},
+];
+const TOTAL_KM=7450;
+
+const BADGE_DEFS=[
+  {id:'first_ride',label:'Premier coup de pédale',desc:'Premier trajet D/T saisi',color:'bp-green',check:p=>p.totalDt>0},
+  {id:'km50',label:'50 km',desc:'50 km cumulés',color:'bp-amber',check:p=>p.totalKm>=50},
+  {id:'km100',label:'100 km',desc:'100 km cumulés',color:'bp-amber',check:p=>p.totalKm>=100},
+  {id:'km200',label:'200 km',desc:'200 km cumulés',color:'bp-amber',check:p=>p.totalKm>=200},
+  {id:'km500',label:'500 km',desc:'500 km cumulés',color:'bp-coral',check:p=>p.totalKm>=500},
+  {id:'regulier',label:'Fer de lance',desc:'5 jours actifs en une semaine',color:'bp-blue',check:p=>p.maxDaysWeek>=5},
+  {id:'sans_faille',label:'Sans faille',desc:'Actif les 4 semaines',color:'bp-purple',check:p=>p.activeWeeks>=4},
+  {id:'best_dt',label:'Champion D/T',desc:'Plus de km domicile/travail',color:'bp-green',check:null},
+  {id:'best_km',label:'Grimpeur',desc:'Plus de km au total',color:'bp-coral',check:null},
+  {id:'best_days',label:'Quotidien',desc:'Plus de jours actifs',color:'bp-blue',check:null},
+];
+
+let state={entries:[],teams:[],goal:500,activeWeekDash:'all',activeWeekSaisie:'all'};
+
+function pts(dt,other){return Math.round(dt*3+other)}
+
+function getParticipantStats(){
+  const map={};
+  for(const e of state.entries){
+    if(!map[e.name]) map[e.name]={name:e.name,totalKm:0,totalDt:0,totalOther:0,totalDays:0,totalPts:0,weekData:{},activeWeeks:0,maxDaysWeek:0};
+    const p=map[e.name];
+    p.totalKm+=e.dt+e.other;
+    p.totalDt+=e.dt;
+    p.totalOther+=e.other;
+    p.totalDays+=e.days;
+    p.totalPts+=pts(e.dt,e.other);
+    if(!p.weekData[e.week]) p.weekData[e.week]={days:0};
+    p.weekData[e.week].days+=e.days;
+    p.activeWeeks=Object.keys(p.weekData).filter(w=>p.weekData[w].days>0).length;
+    p.maxDaysWeek=Math.max(p.maxDaysWeek,e.days);
+  }
+  return Object.values(map);
+}
+
+function getTeamStats(){
+  const pStats=getParticipantStats();
+  const pMap={};
+  for(const p of pStats) pMap[p.name]=p;
+  return state.teams.map(t=>{
+    const km=t.members.reduce((s,m)=>s+(pMap[m]?pMap[m].totalKm:0),0);
+    const p=t.members.reduce((s,m)=>s+(pMap[m]?pMap[m].totalPts:0),0);
+    const days=t.members.reduce((s,m)=>s+(pMap[m]?pMap[m].totalDays:0),0);
+    return {name:t.name,color:t.color,asso:t.asso,members:t.members,km,pts:p,days};
+  }).sort((a,b)=>b.km-a.km);
+}
+
+function teamOf(name){
+  for(const t of state.teams) if(t.members.includes(name)) return t;
+  return null;
+}
+
+function weeks(){return [...new Set(state.entries.map(e=>e.week))].sort();}
+
+function addEntry(){
+  const name=document.getElementById('s-name').value.trim();
+  const week=document.getElementById('s-week').value;
+  const dt=parseFloat(document.getElementById('s-dt').value)||0;
+  const other=parseFloat(document.getElementById('s-other').value)||0;
+  const days=parseInt(document.getElementById('s-days').value)||0;
+  if(!name){document.getElementById('s-name').focus();return;}
+  const idx=state.entries.findIndex(e=>e.name===name&&e.week===week);
+  if(idx>=0) state.entries[idx]={name,week,dt,other,days};
+  else state.entries.push({name,week,dt,other,days});
+  document.getElementById('s-dt').value='';
+  document.getElementById('s-other').value='';
+  document.getElementById('s-days').value='';
+  save();render();
+}
+
+function delEntry(name,week){
+  state.entries=state.entries.filter(e=>!(e.name===name&&e.week===week));
+  save();render();
+}
+
+function addTeam(){
+  const name=document.getElementById('t-name').value.trim();
+  const asso=document.getElementById('t-asso').value.trim();
+  const members=document.getElementById('t-members').value.split('\n').map(m=>m.trim()).filter(Boolean);
+  if(!name) return;
+  const color=TEAM_COLORS[state.teams.length%TEAM_COLORS.length];
+  state.teams.push({name,asso,members,color});
+  document.getElementById('t-name').value='';
+  document.getElementById('t-asso').value='';
+  document.getElementById('t-members').value='';
+  save();render();
+}
+
+function delTeam(idx){state.teams.splice(idx,1);save();render();}
+
+function saveGoal(){
+  const v=parseFloat(document.getElementById('goal-inp').value);
+  if(!isNaN(v)&&v>0){state.goal=v;save();render();}
+}
+
+function save(){
+  try{localStorage.setItem('oneturn_velo_v3',JSON.stringify(state));}catch(e){}
+}
+
+function load(){
+  try{const d=localStorage.getItem('oneturn_velo_v3');if(d) state=JSON.parse(d);}catch(e){}
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+function aggFiltered(entries){
+  const map={};
+  for(const e of entries){
+    if(!map[e.name]) map[e.name]={name:e.name,totalKm:0,totalDt:0,totalOther:0,totalDays:0,totalPts:0};
+    map[e.name].totalKm+=e.dt+e.other;
+    map[e.name].totalDt+=e.dt;
+    map[e.name].totalOther+=e.other;
+    map[e.name].totalDays+=e.days;
+    map[e.name].totalPts+=pts(e.dt,e.other);
+  }
+  return Object.values(map);
+}
+
+function renderWeekPills(containerId,activeVal,fn){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  const ws=weeks();
+  let h=`<button class="week-pill${activeVal==='all'?' active':''}" onclick="${fn}('all')">Toutes semaines</button>`;
+  for(const w of ws) h+=`<button class="week-pill${activeVal===w?' active':''}" onclick="${fn}('${w}')">${w}</button>`;
+  el.innerHTML=h;
+}
+
+function setDashWeek(w){state.activeWeekDash=w;renderDashboard();}
+function setSaisieWeek(w){state.activeWeekSaisie=w;renderSaisie();}
+
+function renderDashboard(){
+  renderWeekPills('dash-week-pills',state.activeWeekDash,'setDashWeek');
+  const filtered=state.activeWeekDash==='all'?state.entries:state.entries.filter(e=>e.week===state.activeWeekDash);
+  const pStats=getParticipantStats();
+  const fStats=aggFiltered(filtered);
+  const totalKm=fStats.reduce((s,p)=>s+p.totalKm,0);
+  const totalPts=fStats.reduce((s,p)=>s+p.totalPts,0);
+  const totalDays=fStats.reduce((s,p)=>s+p.totalDays,0);
+  const allKm=pStats.reduce((s,p)=>s+p.totalKm,0);
+  const allPts=pStats.reduce((s,p)=>s+p.totalPts,0);
+  const cagnotte=allPts*0.10;
+
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="mc"><div class="mc-label">Participants</div><div class="mc-value">${fStats.length}</div><div class="mc-sub">cyclistes actifs</div></div>
+    <div class="mc"><div class="mc-label">Km collectifs</div><div class="mc-value">${totalKm.toFixed(0)}</div><div class="mc-sub">période sélectionnée</div></div>
+    <div class="mc"><div class="mc-label">Points</div><div class="mc-value">${totalPts}</div><div class="mc-sub">0,10 € / pt</div></div>
+    <div class="mc"><div class="mc-label">Jours actifs</div><div class="mc-value">${totalDays}</div><div class="mc-sub">total participants</div></div>
+  `;
+
+  const pct=Math.min(100,(cagnotte/state.goal)*100);
+  document.getElementById('dash-cagnotte-val').textContent=cagnotte.toFixed(2).replace('.',',')+' €';
+  document.getElementById('dash-cagnotte-fill').style.width=pct+'%';
+  document.getElementById('dash-cagnotte-max').textContent=state.goal.toFixed(0)+' €';
+  const assoList=state.teams.filter(t=>t.asso).map(t=>t.asso).join(' · ');
+  document.getElementById('dash-asso').textContent=assoList?'Associations : '+assoList:'';
+
+  const routePct=Math.min(100,(allKm/TOTAL_KM)*100);
+  document.getElementById('dash-route-fill').style.width=routePct+'%';
+  document.getElementById('dash-route-pct').textContent=routePct.toFixed(1)+'%';
+  const etapeCourante=ETAPES.filter(e=>e.cumul<=allKm).pop()||ETAPES[0];
+  const etapeSuiv=ETAPES.find(e=>e.cumul>allKm);
+  document.getElementById('dash-route-sub').textContent=`Étape atteinte : ${etapeCourante.flag} ${etapeCourante.name}`+(etapeSuiv?` — prochaine : ${etapeSuiv.flag} ${etapeSuiv.name} (encore ${Math.round(etapeSuiv.cumul-allKm)} km)`:' — Tour terminé !');
+
+  const topKm=[...pStats].sort((a,b)=>b.totalKm-a.totalKm)[0];
+  const topDays=[...pStats].sort((a,b)=>b.totalDays-a.totalDays)[0];
+  const teamStats=getTeamStats();
+  const topTeam=teamStats[0];
+  document.getElementById('dash-medals').innerHTML=`
+    <div class="medal-card"><div class="medal-icon">🥇</div><div class="medal-title">Meilleure équipe</div><div class="medal-winner">${topTeam?topTeam.name+'<br><small style="font-weight:400;color:#999">'+topTeam.km.toFixed(0)+' km</small>':'—'}</div></div>
+    <div class="medal-card"><div class="medal-icon">🚴</div><div class="medal-title">Meilleur km individuel</div><div class="medal-winner">${topKm?topKm.name+'<br><small style="font-weight:400;color:#999">'+topKm.totalKm.toFixed(0)+' km</small>':'—'}</div></div>
+    <div class="medal-card"><div class="medal-icon">📅</div><div class="medal-title">Meilleure régularité</div><div class="medal-winner">${topDays?topDays.name+'<br><small style="font-weight:400;color:#999">'+topDays.totalDays+' jours</small>':'—'}</div></div>
+  `;
+
+  const tBody=document.querySelector('#dash-team-lb tbody');
+  if(teamStats.length===0){tBody.innerHTML='<tr><td colspan="6" class="empty">Aucune équipe configurée</td></tr>';}
+  else{
+    const medals=['🥇','🥈','🥉'];
+    tBody.innerHTML=teamStats.map((t,i)=>`<tr><td>${medals[i]||i+1}</td><td><span class="team-dot" style="background:${t.color}"></span><strong>${t.name}</strong></td><td class="r">${t.km.toFixed(0)}</td><td class="r">${t.pts}</td><td class="r">${t.days}</td><td style="font-size:12px;color:#999">${t.asso||'—'}</td></tr>`).join('');
+  }
+
+  const iBody=document.querySelector('#dash-ind-lb tbody');
+  const iStats=aggFiltered(filtered).sort((a,b)=>b.totalPts-a.totalPts);
+  if(iStats.length===0){iBody.innerHTML='<tr><td colspan="7" class="empty">Aucun résultat saisi</td></tr>';}
+  else{
+    iBody.innerHTML=iStats.map((p,i)=>{
+      const t=teamOf(p.name);
+      const dot=t?`<span class="team-dot" style="background:${t.color}"></span>${t.name}`:'—';
+      return `<tr><td>${i+1}</td><td><strong>${p.name}</strong></td><td>${dot}</td><td class="r">${p.totalDt.toFixed(1)}</td><td class="r">${p.totalOther.toFixed(1)}</td><td class="r">${p.totalDays}</td><td class="r" style="font-weight:600;color:#085041">${p.totalPts}</td></tr>`;
+    }).join('');
+  }
+}
+
+function renderSaisie(){
+  renderWeekPills('saisie-week-pills',state.activeWeekSaisie,'setSaisieWeek');
+  const filtered=(state.activeWeekSaisie==='all'?state.entries:state.entries.filter(e=>e.week===state.activeWeekSaisie)).slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const tbody=document.querySelector('#saisie-table tbody');
+  if(filtered.length===0){tbody.innerHTML='<tr><td colspan="8" class="empty">Aucun résultat saisi</td></tr>';return;}
+  tbody.innerHTML=filtered.map(e=>{
+    const t=teamOf(e.name);
+    const dot=t?`<span class="team-dot" style="background:${t.color}"></span>${t.name}`:'<span style="color:#ccc">sans équipe</span>';
+    return `<tr><td>${e.name}</td><td>${dot}</td><td><span class="badge-pill bp-green">${e.week}</span></td><td class="r">${e.dt.toFixed(1)}</td><td class="r">${e.other.toFixed(1)}</td><td class="r">${e.days}</td><td class="r" style="font-weight:600;color:#085041">${pts(e.dt,e.other)}</td><td><button class="del-btn" onclick="delEntry('${e.name}','${e.week}')">×</button></td></tr>`;
+  }).join('');
+}
+
+function renderEquipes(){
+  const el=document.getElementById('teams-list');
+  if(state.teams.length===0){el.innerHTML='<div class="empty">Aucune équipe créée</div>';return;}
+  el.innerHTML=state.teams.map((t,i)=>`
+    <div class="team-card">
+      <div class="team-header">
+        <span class="team-dot" style="background:${t.color};width:14px;height:14px"></span>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">${t.name}</div>
+          <div style="font-size:12px;color:#999">${t.asso?'Association : '+t.asso:'Aucune association renseignée'}</div>
+        </div>
+        <button class="del-btn" onclick="delTeam(${i})">×</button>
+      </div>
+      <div style="font-size:12px;color:#666">${t.members.length} membre(s) : ${t.members.join(', ')||'—'}</div>
+    </div>
+  `).join('');
+}
+
+function renderEtapes(){
+  document.getElementById('goal-inp').value=state.goal;
+  const totalKm=getParticipantStats().reduce((s,p)=>s+p.totalKm,0);
+  document.getElementById('etapes-list').innerHTML=ETAPES.map((e,i)=>{
+    const unlocked=totalKm>=e.cumul;
+    return `<div class="etape-item">
+      <div class="etape-num ${unlocked?'etape-unlocked':'etape-locked'}">${unlocked?'✓':i+1}</div>
+      <div style="flex:1">
+        <div class="etape-name">${e.flag} ${e.name}</div>
+        <div class="etape-dist">${i===0?'Point de départ':'+'+e.dist+' km — cumulé : '+e.cumul+' km'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBadges(){
+  const pStats=getParticipantStats();
+  const topKm=[...pStats].sort((a,b)=>b.totalKm-a.totalKm)[0];
+  const topDays=[...pStats].sort((a,b)=>b.totalDays-a.totalDays)[0];
+  const topDt=[...pStats].sort((a,b)=>b.totalDt-a.totalDt)[0];
+  const el=document.getElementById('badges-list');
+  if(pStats.length===0){el.innerHTML='<div class="empty">Saisir des résultats pour voir les badges</div>';return;}
+  let html='<div class="section-label">Badges débloqués par participant</div>';
+  for(const p of [...pStats].sort((a,b)=>a.name.localeCompare(b.name))){
+    const earned=BADGE_DEFS.filter(b=>{
+      if(b.check) return b.check(p);
+      if(b.id==='best_dt') return topDt&&topDt.name===p.name&&p.totalDt>0;
+      if(b.id==='best_km') return topKm&&topKm.name===p.name&&p.totalKm>0;
+      if(b.id==='best_days') return topDays&&topDays.name===p.name&&p.totalDays>0;
+      return false;
+    });
+    const t=teamOf(p.name);
+    html+=`<div class="team-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        ${t?`<span class="team-dot" style="background:${t.color}"></span>`:''}
+        <strong style="font-size:13px">${p.name}</strong>
+        <span style="font-size:11px;color:#999;margin-left:auto">${p.totalKm.toFixed(0)} km · ${p.totalDays} j</span>
+      </div>
+      <div>${earned.length===0?'<span style="font-size:12px;color:#ccc">Aucun badge encore</span>':earned.map(b=>`<span class="badge-pill ${b.color}">${b.label}</span>`).join('')}</div>
+    </div>`;
+  }
+  html+='<div class="section-label" style="margin-top:1.5rem">Référentiel des badges</div><div class="card">';
+  for(const b of BADGE_DEFS){
+    html+=`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f0f0ee"><span class="badge-pill ${b.color}" style="flex-shrink:0">${b.label}</span><span style="font-size:12px;color:#888">${b.desc}</span></div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function render(){renderDashboard();renderSaisie();renderEquipes();renderEtapes();renderBadges();}
+
+function exportCSV(){
+  const rows=[['Participant','Equipe','Association','Semaine','Km_DT','Km_autres','Jours','Points']];
+  for(const e of state.entries){
+    const t=teamOf(e.name);
+    rows.push([e.name,t?t.name:'',t?t.asso:'',e.week,e.dt.toFixed(1),e.other.toFixed(1),e.days,pts(e.dt,e.other)]);
+  }
+  const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  const now=new Date();
+  a.download=`challenge_velo_oneturn_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+load();render();
+</script>
+</body>
+</html>
